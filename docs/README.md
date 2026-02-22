@@ -11,7 +11,8 @@
 | Document | Purpose |
 |----------|---------|
 | [System Overview](./zoezi-architecture/SYSTEM-OVERVIEW.md) | Architecture, tech stack, core concepts |
-| [Component Structure](./zoezi-architecture/COMPONENT-STRUCTURE.md) | How to create Zoezi components |
+| [Component Structure](./zoezi-architecture/COMPONENT-STRUCTURE.md) | How to create Zoezi components (Vue SFC + deployed format) |
+| [Addon Deployment](./zoezi-architecture/ADDON-DEPLOYMENT.md) | Addon repo structure, webhooks, APIs, widgets, deployment |
 | [Services & State](./zoezi-architecture/SERVICES-AND-STATE.md) | Available services, Vuex store, APIs |
 | [Integration Patterns](./zoezi-patterns/INTEGRATION-PATTERNS.md) | Common patterns for checkout, cart, auth |
 | [Component Reference](./zoezi-components/COMPONENT-REFERENCE.md) | Key components and their props |

@@ -9,6 +9,10 @@ This file contains instructions for AI assistants building apps with the Zoezi A
 > **This is a STARTER TEMPLATE for building Zoezi-integrated apps.**
 >
 > Use this as a foundation to create custom applications that fetch data from the Zoezi gym membership platform API and display it in a frontend.
+>
+> Apps built with this template can have **two deployment targets**:
+> 1. **Backend (Express server)** — hosted on Replit or similar, handles API proxying and business logic
+> 2. **Zoezi Developer Portal (Addon)** — Vue 2 components, webhooks, cloud functions, and widgets deployed directly to the Zoezi platform via git push
 
 ### Key Files
 
@@ -29,6 +33,7 @@ This file contains instructions for AI assistants building apps with the Zoezi A
 1. **[Zoezi API docs.json](./Zoezi%20API%20docs.json)** - API endpoints reference
 2. **[docs/zoezi-architecture/SERVICES-AND-STATE.md](./docs/zoezi-architecture/SERVICES-AND-STATE.md)** - API services
 3. **[docs/zoezi-patterns/INTEGRATION-PATTERNS.md](./docs/zoezi-patterns/INTEGRATION-PATTERNS.md)** - Common patterns
+4. **[docs/zoezi-architecture/ADDON-DEPLOYMENT.md](./docs/zoezi-architecture/ADDON-DEPLOYMENT.md)** - Addon structure and deployment
 
 ---
 
@@ -202,6 +207,50 @@ zoezi-app-starter/
 
 ---
 
+## Zoezi Addon Deployment
+
+If building a Zoezi addon (components embedded in the Zoezi platform), the addon is managed via a **separate git repo that deploys directly** to the developer portal on push.
+
+See **[docs/zoezi-architecture/ADDON-DEPLOYMENT.md](./docs/zoezi-architecture/ADDON-DEPLOYMENT.md)** for the complete structure.
+
+### Addon repo structure:
+
+```
+zoezi-component/
+├── config.json          # Addon metadata (name, permissions, state)
+├── webhooks.json        # Webhook subscriptions
+├── settings.json        # Addon settings schema
+├── apis.json            # Custom API endpoints
+├── widgets.json         # Staff dashboard widgets
+├── components/          # Vue 2 components (code.js, template.html, style.css, config.json each)
+└── functions/           # Cloud functions (code.js, config.json each)
+```
+
+### Deploy addon changes:
+
+```bash
+cd ~/zoezi-component
+git pull origin main
+# Make changes
+git add . && git commit -m "description" && git push origin main
+```
+
+Changes are **live immediately** after push.
+
+---
+
+## Zoezi Component Documentation Convention
+
+When documenting Zoezi components, follow the **ONE master file** rule:
+
+1. **ONE file per component** in `docs/zoezi-components/` named `[NAME]-COMPONENT-COMPLETE.md`
+2. **FULL working code** in every file — complete HTML, JavaScript, and CSS sections
+3. **Update existing files** — never create partial update files or "ADD THESE" style docs
+4. **Copy-paste ready** — zero external references, zero partial snippets
+5. **Single source of truth** — each file is the definitive version of that component
+
+---
+
 ## Checklist Before Deploying
 
 - [ ] Environment variables configured
@@ -225,5 +274,10 @@ When building Zoezi apps:
 5. **Consider multi-site** - Filter by site ID when relevant
 6. **Use environment variables** - Never hardcode credentials
 7. **Test thoroughly** - Verify API responses and UI display
+8. **Deploy addon components** - Push to the zoezi-component repo for live Zoezi platform deployment (see ADDON-DEPLOYMENT.md)
+
+**Two deployment targets to remember:**
+- **Backend** → Replit (or similar) via `index.js`
+- **Addon components/webhooks/functions** → Zoezi Developer Portal via `git push` in the zoezi-component repo
 
 The documentation in `docs/` has detailed examples and patterns for Zoezi integration.

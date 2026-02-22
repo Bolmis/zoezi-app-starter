@@ -448,6 +448,71 @@ export default {
 </script>
 ```
 
+## Deployed Component File Structure
+
+When components are deployed to the Zoezi Developer Portal (via the addon git repo), each component is split into **4 separate files** in its own directory:
+
+```
+components/MY-COMPONENT/
+├── config.json      # Component metadata (id, name, type)
+├── code.js          # JavaScript — Vue export default { ... }
+├── template.html    # HTML template (no <template> wrapper)
+└── style.css        # CSS styles (no <style> tag, plain CSS)
+```
+
+### config.json
+```json
+{
+    "id": "auto-generated-hash",
+    "name": "MY-COMPONENT",
+    "dependencies": null,
+    "type": "vue2"
+}
+```
+
+### code.js
+Standard Vue 2 export — same as the `<script>` section of a `.vue` file:
+```javascript
+export default {
+    data() {
+        return { loading: false, items: [] };
+    },
+    methods: {
+        async loadData() {
+            this.items = await this.$api.get('/api/endpoint');
+        }
+    }
+};
+```
+
+### template.html
+Pure HTML — same as the contents inside `<template>` in a `.vue` file:
+```html
+<div class="my-component">
+    <div v-if="loading" class="text-center pa-4">
+        <v-progress-circular indeterminate color="primary" />
+    </div>
+    <div v-else>
+        <!-- Content -->
+    </div>
+</div>
+```
+
+### style.css
+Plain CSS — same as the contents inside `<style>` in a `.vue` file:
+```css
+.my-component {
+    padding: 16px;
+}
+.my-component .header {
+    font-size: 1.5em;
+}
+```
+
+> **Note:** The deployed format splits what would be a single `.vue` file into 4 files. The `code.js` / `template.html` / `style.css` map directly to the `<script>` / `<template>` / `<style>` sections. SCSS is not supported in `style.css` — use plain CSS.
+
+---
+
 ## Component Registration
 
 Components are automatically registered when:
