@@ -1,38 +1,60 @@
-# Zoezi Component Development Documentation
+# Zoezi Addon Development — Documentation Index
 
-> **Purpose of this Repository**
->
-> This is a **reference repository** containing Zoezi framework source code and documentation for AI assistants. The files here provide context for building custom apps and components that integrate with the Zoezi gym membership platform.
->
-> **You don't modify these files** - you use them to understand how Zoezi works so you can create new integrated components.
+> **This is a KNOWLEDGE BASE for AI assistants (Claude, Codex, etc.).**
+> Clone this repo when starting a new Zoezi addon project. The documentation here provides all context needed to build a production-grade addon from scratch.
+
+---
 
 ## Quick Navigation
 
-| Document | Purpose |
-|----------|---------|
-| [System Overview](./zoezi-architecture/SYSTEM-OVERVIEW.md) | Architecture, tech stack, core concepts |
-| [Component Structure](./zoezi-architecture/COMPONENT-STRUCTURE.md) | How to create Zoezi components (Vue SFC + deployed format) |
-| [Addon Deployment](./zoezi-architecture/ADDON-DEPLOYMENT.md) | Addon repo structure, webhooks, APIs, widgets, deployment |
-| [Services & State](./zoezi-architecture/SERVICES-AND-STATE.md) | Available services, Vuex store, APIs |
-| [Integration Patterns](./zoezi-patterns/INTEGRATION-PATTERNS.md) | Common patterns for checkout, cart, auth |
-| [Component Reference](./zoezi-components/COMPONENT-REFERENCE.md) | Key components and their props |
+### Start Here (Backend + Infrastructure)
 
-## Repository Contents
+| Document | What You Learn |
+|----------|----------------|
+| **[ZOEZI_QUICKSTART.md](ZOEZI_QUICKSTART.md)** | Get a working addon in 30 minutes |
+| **[BACKEND-ARCHITECTURE.md](zoezi-patterns/BACKEND-ARCHITECTURE.md)** | Express setup, auth middleware, routes, webhooks, cron, file uploads |
+| **[SUPABASE-PATTERNS.md](zoezi-patterns/SUPABASE-PATTERNS.md)** | Multi-tenant DB design, queries, storage, RLS, migrations |
+| **[ZOEZI_API_REFERENCE.md](ZOEZI_API_REFERENCE.md)** | Complete Zoezi API — users, groups, statuses, TODOs, discounts |
+| **[ZOEZI_ADDON_GUIDE.md](ZOEZI_ADDON_GUIDE.md)** | Comprehensive guide covering all patterns in one document |
 
-| Content | Purpose | Do I Modify? |
-|---------|---------|--------------|
-| `components/` | Zoezi framework Vue components | **NO** - Reference only |
-| `main.js` | Zoezi app initialization | **NO** - Reference only |
-| `router.js` | Zoezi routing system | **NO** - Reference only |
-| `dateextensions.js` | Zoezi date utilities | **NO** - Reference only |
-| `docs/` | Documentation for AI assistants | **NO** - Reference only |
-| `Fysiken/`, `Centralbadet/`, etc. | Brand-specific custom components | **YES** - Examples of custom integrations |
-| `claude.md` | AI coding instructions | Update as needed |
+### Zoezi Platform (Frontend Components)
 
-**When building new Zoezi integrations:**
-- Study the framework files to understand patterns
-- Create new components following the patterns you see
-- Place custom implementations in brand-specific folders (e.g., `Fysiken/`)
+| Document | What You Learn |
+|----------|----------------|
+| **[ADDON-DEPLOYMENT.md](zoezi-architecture/ADDON-DEPLOYMENT.md)** | Developer Portal structure — config.json, webhooks, widgets, deployment |
+| **[COMPONENT-STRUCTURE.md](zoezi-architecture/COMPONENT-STRUCTURE.md)** | Vue 2 component creation — props, metadata, URL sync, styling |
+| **[SERVICES-AND-STATE.md](zoezi-architecture/SERVICES-AND-STATE.md)** | Platform services — `$api`, `$store`, `$translate`, `$booking` |
+| **[INTEGRATION-PATTERNS.md](zoezi-patterns/INTEGRATION-PATTERNS.md)** | Checkout, cart, auth, products, bookings, multi-site patterns |
+| **[COMPONENT-REFERENCE.md](zoezi-components/COMPONENT-REFERENCE.md)** | Built-in Zoezi components — login, shop, checkout, booking, mypage |
+
+### Architecture
+
+| Document | What You Learn |
+|----------|----------------|
+| **[SYSTEM-OVERVIEW.md](zoezi-architecture/SYSTEM-OVERVIEW.md)** | Zoezi tech stack — Vue 2, Vuetify, Vuex, CSS architecture |
+
+---
+
+## Documentation Structure
+
+```
+docs/
+├── README.md                             # This file
+├── ZOEZI_ADDON_GUIDE.md                  # Comprehensive addon development guide
+├── ZOEZI_API_REFERENCE.md                # Complete Zoezi API reference
+├── ZOEZI_QUICKSTART.md                   # 30-minute quickstart template
+├── zoezi-architecture/
+│   ├── SYSTEM-OVERVIEW.md                # Zoezi tech stack and architecture
+│   ├── SERVICES-AND-STATE.md             # $api, $store, $translate, $booking
+│   ├── COMPONENT-STRUCTURE.md            # Vue 2 component creation guide
+│   └── ADDON-DEPLOYMENT.md              # Developer Portal structure + deployment
+├── zoezi-patterns/
+│   ├── BACKEND-ARCHITECTURE.md           # Express, auth, routes, webhooks, cron
+│   ├── SUPABASE-PATTERNS.md              # Multi-tenant DB, queries, storage, RLS
+│   └── INTEGRATION-PATTERNS.md           # Checkout, cart, auth, products, bookings
+└── zoezi-components/
+    └── COMPONENT-REFERENCE.md            # Built-in Zoezi components reference
+```
 
 ---
 
@@ -42,142 +64,21 @@ Zoezi is a **Vue.js 2 + Vuetify** gym management platform that provides:
 
 - **Membership sales** (training cards, subscriptions)
 - **Group training** booking (classes, workouts)
-- **Course booking** (multi-session programs)
-- **Resource booking** (equipment, rooms, personal training)
+- **Course & Resource booking** (rooms, equipment, personal training)
 - **E-commerce** (webshop with products)
 - **User management** (family accounts, payment methods)
+- **Addon system** — third-party apps that extend the platform
 
-## Key Principles
+## What is a Zoezi Addon?
 
-### 1. Configuration-Driven
-Components are configured through the Zoezi page builder. Props become configurable options.
+An addon has three parts:
+1. **Backend API** — Node.js/Express on Replit, with Supabase for storage
+2. **Frontend Components** — Vue 2 components deployed via the Zoezi Developer Portal
+3. **Configuration** — Webhooks, settings, widgets, APIs defined in JSON files
 
-### 2. Multi-Tenant
-The system supports multiple sites/locations. Always consider `$store.state.selectedSiteId`.
+Key characteristics:
+- **Multi-tenant** — One backend serves many gyms, isolated by hostname
+- **Session-based auth** — SHA-256 hash of Zoezi session cookie, verified server-side
+- **Two deployment targets** — Backend on Replit + components via git push
 
-### 3. Component Naming
-All Zoezi components MUST be named with the `zoezi-` prefix (e.g., `zoezi-shop`, `zoezi-mypage`).
-
-### 4. Service Access
-Components access backend data through injected services:
-- `this.$api` - API calls
-- `this.$store` - Vuex state
-- `this.$translate` - Localization
-- `this.$booking` - Booking utilities
-
-## Quick Start Example
-
-```vue
-<template>
-  <div v-if="$store.state.user">
-    <h1>{{ $translate('Welcome') }}, {{ $store.state.user.firstname }}</h1>
-    <div v-for="product in products" :key="product.id">
-      {{ product.name }} - {{ product.price | price }}
-    </div>
-  </div>
-  <zoezi-identification v-else title="Please log in" />
-</template>
-
-<script>
-export default {
-  name: 'zoezi-my-component',
-
-  zoezi: {
-    title: 'My Component',
-    icon: 'mdi-star'
-  },
-
-  props: {
-    showPrices: {
-      title: 'Show prices',
-      type: Boolean,
-      default: true
-    }
-  },
-
-  data: () => ({
-    products: []
-  }),
-
-  mounted() {
-    this.$api.get('/api/public/trainingcard/type/get').then(data => {
-      this.products = data;
-    });
-  }
-}
-</script>
-```
-
-## File Organization
-
-```
-StrongSales-Zoezi/
-├── docs/                            # Documentation (READ FIRST)
-│   ├── README.md                    # This file
-│   ├── zoezi-architecture/
-│   │   ├── SYSTEM-OVERVIEW.md       # Architecture & tech stack
-│   │   ├── COMPONENT-STRUCTURE.md   # Component creation guide
-│   │   └── SERVICES-AND-STATE.md    # Services & Vuex store
-│   ├── zoezi-patterns/
-│   │   └── INTEGRATION-PATTERNS.md  # Common integration patterns
-│   └── zoezi-components/
-│       └── COMPONENT-REFERENCE.md   # Key component documentation
-│
-├── components/                      # Vue Components (75 total)
-│   ├── README.md                    # Component organization guide
-│   ├── auth/                        # Authentication (4 components)
-│   │   ├── Identification.vue
-│   │   ├── Login.vue
-│   │   ├── Logout.vue
-│   │   └── ResetPassword.vue
-│   ├── checkout/                    # Payments (6 components)
-│   │   ├── Checkout.vue             # Main checkout - USE THIS
-│   │   └── ...
-│   ├── shop/                        # E-commerce (6 components)
-│   │   ├── Shop.vue
-│   │   └── ...
-│   ├── booking/                     # All booking features
-│   │   ├── group-training/          # Group classes (3)
-│   │   ├── courses/                 # Courses (8)
-│   │   └── resources/               # Resource booking (6)
-│   ├── user/                        # User dashboard (12 components)
-│   │   ├── MyPage.vue
-│   │   └── ...
-│   ├── layout/                      # UI/Layout (13 components)
-│   ├── dialogs/                     # Dialogs (5 components)
-│   ├── admin/                       # Admin tools (5 components)
-│   └── misc/                        # Miscellaneous (7 components)
-│
-├── main.js                          # Application entry point
-├── router.js                        # Route configuration
-├── dateextensions.js                # Date utilities
-│
-├── Fysiken/                         # Brand-specific implementations
-├── Centralbadet/
-├── Pelvic Lab/
-├── Sturebadet/
-│
-└── claude.md                        # AI coding instructions
-```
-
-## Important Files to Read
-
-When starting work on Zoezi components, read these files:
-
-1. **`claude.md`** - AI-specific instructions and rules
-2. **`components/README.md`** - Component organization
-3. **`main.js`** - Application initialization and configuration
-4. **`router.js`** - Route handling
-5. **Target component `.vue` files** - Existing patterns to follow
-
-## Key Components by Feature
-
-| Feature | Component Path |
-|---------|---------------|
-| **Checkout** | `components/checkout/Checkout.vue` |
-| **Shop** | `components/shop/Shop.vue` |
-| **Login** | `components/auth/Identification.vue` |
-| **User Dashboard** | `components/user/MyPage.vue` |
-| **Group Training** | `components/booking/group-training/GroupTraining.vue` |
-| **Resource Booking** | `components/booking/resources/ResourceBooking.vue` |
-| **Course Booking** | `components/booking/courses/CourseBooking.vue` |
+See **[CLAUDE.md](../CLAUDE.md)** for the complete AI briefing document.
